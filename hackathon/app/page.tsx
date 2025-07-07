@@ -28,6 +28,7 @@ export default function TurtleOceanGame() {
   const [gameState, setGameState] = useState<"menu" | "playing" | "gameOver">("menu")
   const [score, setScore] = useState(0)
   const [highScore, setHighScore] = useState(0)
+  const lastUpdateTime = useRef(Date.now())
 
   // Game objects
   const turtle = useRef<Turtle>({
@@ -208,7 +209,10 @@ export default function TurtleOceanGame() {
     }
 
     spawnDebris(canvas)
-    setScore((prev) => prev + 1)
+    if (Date.now() - lastUpdateTime.current > 200) {
+      setScore((prev) => prev + 1)
+      lastUpdateTime.current = Date.now()
+    }
   }, [setGameState, setScore])
 
 
