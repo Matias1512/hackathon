@@ -24,7 +24,7 @@ interface Debris extends GameObject {
 
 export default function TurtleOceanGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const gameLoopRef = useRef<number>()
+  const gameLoopRef = useRef<number | null>(null)
   const [gameState, setGameState] = useState<"menu" | "playing" | "gameOver">("menu")
   const [score, setScore] = useState(0)
   const [highScore, setHighScore] = useState(0)
@@ -176,10 +176,9 @@ export default function TurtleOceanGame() {
     }
   }
 
-  const updateGame = (canvas: HTMLCanvasElement) => {
+  const updateGame = useCallback((canvas: HTMLCanvasElement) => {
     const currentTurtle = turtle.current
 
-    // Update turtle position
     if (keys.current["ArrowUp"] && currentTurtle.targetY > 0) {
       currentTurtle.targetY -= currentTurtle.speed
     }
@@ -193,17 +192,14 @@ export default function TurtleOceanGame() {
       currentTurtle.x += currentTurtle.speed
     }
 
-    // Smooth turtle movement
     currentTurtle.y += (currentTurtle.targetY - currentTurtle.y) * 0.1
 
-    // Update debris
     debris.current = debris.current.filter((item) => {
       item.y += item.speed
       item.rotation += 0.02
       return item.y < canvas.height + 50
     })
 
-    // Check collisions
     for (const item of debris.current) {
       if (checkCollision(currentTurtle, item)) {
         setGameState("gameOver")
@@ -211,12 +207,9 @@ export default function TurtleOceanGame() {
       }
     }
 
-    // Spawn new debris
     spawnDebris(canvas)
-
-    // Update score
     setScore((prev) => prev + 1)
-  }
+  }, [setGameState, setScore])
 
   const gameLoop = useCallback(() => {
     const canvas = canvasRef.current
@@ -243,7 +236,7 @@ export default function TurtleOceanGame() {
     debris.current.forEach((item) => drawDebris(ctx, item))
 
     gameLoopRef.current = requestAnimationFrame(gameLoop)
-  }, [gameState])
+  }, [gameState, updateGame])
 
   const startGame = () => {
     // Reset game state
@@ -386,7 +379,7 @@ export default function TurtleOceanGame() {
                 <p className="text-sm text-red-600 font-semibold mb-6">
                   💔 Chaque année, 8 millions de tonnes de plastique finissent dans les océans
                 </p>
-                <p className="text-gray-600 mb-6">Utilise les flèches du clavier ou touche l'écran pour naviguer.</p>
+                <p className="text-gray-600 mb-6">Utilise les flèches du clavier ou touche l&apos;écran pour naviguer.</p>
                 <Button onClick={startGame} size="lg" className="w-full">
                   <Play className="w-5 h-5 mr-2" />
                   Commencer à jouer
@@ -422,7 +415,7 @@ export default function TurtleOceanGame() {
         {/* Instructions avec message environnemental */}
         <Card className="mt-6 p-4 max-w-2xl text-center bg-white/90 backdrop-blur-sm">
           <p className="text-sm text-gray-600 mb-2">
-            <strong>Contrôles:</strong> Flèches directionnelles (PC) ou touchez l'écran (Mobile)
+            <strong>Contrôles:</strong> Flèches directionnelles (PC) ou touchez l&apos;écran (Mobile)
           </p>
           <p className="text-sm text-green-700 font-semibold">
             🌍 <strong>Mission:</strong> Sensibiliser à la protection de la vie marine contre la pollution plastique
