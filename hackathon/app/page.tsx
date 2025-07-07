@@ -211,6 +211,7 @@ export default function TurtleOceanGame() {
     setScore((prev) => prev + 1)
   }, [setGameState, setScore])
 
+
   const gameLoop = useCallback(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -264,10 +265,18 @@ export default function TurtleOceanGame() {
   // Handle keyboard input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Empêcher le scroll de la page quand on joue
+      if (gameState === "playing" && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
+        e.preventDefault()
+      }
       keys.current[e.code] = true
     }
 
     const handleKeyUp = (e: KeyboardEvent) => {
+      // Empêcher le scroll de la page quand on joue
+      if (gameState === "playing" && ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
+        e.preventDefault()
+      }
       keys.current[e.code] = false
     }
 
@@ -278,7 +287,7 @@ export default function TurtleOceanGame() {
       window.removeEventListener("keydown", handleKeyDown)
       window.removeEventListener("keyup", handleKeyUp)
     }
-  }, [])
+  }, [gameState])
 
   // Handle touch input for mobile
   useEffect(() => {
@@ -324,23 +333,6 @@ export default function TurtleOceanGame() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-400 to-blue-800 flex items-center justify-center p-4 px-8 md:px-16 lg:px-24 relative overflow-hidden">
-      {/* Image de gauche */}
-      <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-0">
-        <img
-          src="/images/ocean-pollution-1.jpg"
-          alt="Pollution plastique des océans - Sensibilisation environnementale"
-          className="w-48 md:w-64 lg:w-80 h-auto rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-500"
-        />
-      </div>
-
-      {/* Image de droite */}
-      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 z-0">
-        <img
-          src="/images/ocean-pollution-2.jpg"
-          alt="Impact de la pollution plastique sur la vie marine"
-          className="w-48 md:w-64 lg:w-80 h-auto rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-500"
-        />
-      </div>
 
       {/* Contenu principal du jeu */}
       <div className="relative z-10 flex flex-col items-center">
@@ -421,6 +413,79 @@ export default function TurtleOceanGame() {
             🌍 <strong>Mission:</strong> Sensibiliser à la protection de la vie marine contre la pollution plastique
           </p>
         </Card>
+
+        {/* Section informative sur les tortues marines */}
+        <div className="mt-12 w-full max-w-4xl space-y-6">
+          <Card className="p-6 bg-white/95 backdrop-blur-sm">
+            <h2 className="text-2xl font-bold text-red-700 mb-4 text-center">
+              🚨 L&apos;Impact Dramatique de la Pollution Plastique sur les Tortues Marines
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
+                  <h3 className="font-bold text-red-800 mb-2">💔 Statistiques Alarmantes</h3>
+                  <ul className="text-sm text-red-700 space-y-1">
+                    <li>• Plus de 1000 tortues marines meurent chaque jour à cause des déchets plastiques</li>
+                    <li>• 52% des tortues marines ont ingéré du plastique</li>
+                    <li>• Les sacs plastiques sont souvent confondus avec des méduses, leur nourriture favorite</li>
+                    <li>• Une tortue peut mourir après avoir ingéré seulement 14 morceaux de plastique</li>
+                  </ul>
+                </div>
+
+                <div className="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+                  <h3 className="font-bold text-orange-800 mb-2">⚠️ Conséquences Mortelles</h3>
+                  <ul className="text-sm text-orange-700 space-y-1">
+                    <li>• Obstruction intestinale fatale</li>
+                    <li>• Empoisonnement par les toxines plastiques</li>
+                    <li>• Blessures causées par les débris coupants</li>
+                    <li>• Enchevêtrement dans les filets et cordes</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <h3 className="font-bold text-blue-800 mb-2">🌊 Dans Nos Océans</h3>
+                  <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• 8 millions de tonnes de plastique déversées chaque année</li>
+                    <li>• 5 000 milliards de morceaux de plastique flottent dans nos océans</li>
+                    <li>• Le plastique met 450 ans à se décomposer</li>
+                    <li>• 80% des déchets marins proviennent de la terre</li>
+                  </ul>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                  <h3 className="font-bold text-green-800 mb-2">💚 Comment Agir ?</h3>
+                  <ul className="text-sm text-green-700 space-y-1">
+                    <li>• Réduire l&apos;usage du plastique à usage unique</li>
+                    <li>• Participer aux nettoyages de plages</li>
+                    <li>• Recycler correctement ses déchets</li>
+                    <li>• Sensibiliser son entourage</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-gradient-to-r from-blue-100 to-green-100 rounded-lg text-center">
+              <p className="text-lg font-semibold text-gray-800 mb-2">
+                🐢 &quot;Chaque geste compte pour sauver nos tortues marines&quot;
+              </p>
+              <p className="text-sm text-gray-600">
+                Les tortues marines existent depuis plus de 100 millions d&apos;années. Ne laissons pas la pollution
+                plastique mettre fin à leur histoire.
+              </p>
+            </div>
+          </Card>
+
+          <Card className="p-4 bg-gradient-to-r from-teal-500 to-blue-600 text-white text-center">
+            <p className="font-bold text-lg mb-2">🌍 Ensemble, protégeons nos océans !</p>
+            <p className="text-sm opacity-90">
+              Ce jeu vise à sensibiliser sur l&apos;urgence de protéger la vie marine. Partagez ce message pour amplifier
+              l&apos;impact !
+            </p>
+          </Card>
+        </div>
       </div>
     </div>
   )
